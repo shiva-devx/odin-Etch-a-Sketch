@@ -50,13 +50,14 @@ btnDiv.style.cssText = `
 // creating new button for random color and black color
 let randomColorBtn = document.createElement("button");
 randomColorBtn.textContent = "Random Color";
+randomColorBtn.className = "randomColorBtn";
 randomColorBtn.addEventListener("click", () => {
     isRandomColor = true;
     currentColor = randomColor();
 })
 
 let blackBtn = document.createElement("button");
-blackBtn.className = "black";
+blackBtn.className = "blackBtn";
 blackBtn.textContent = "Black";
 blackBtn.addEventListener("click", () => {
     isRandomColor = false;
@@ -167,8 +168,8 @@ const drawGrid = (size) => {
                 cell.style.backgroundColor = `hsl(${hue}, 100%, ${lightness}%)`;
             } else {
                 // For non-random mode (black)
-                const lightness = 100 - darkness * 10;
-                cell.style.backgroundColor = `hsl(0, 0%, ${lightness}%)`;
+                // const lightness = 100 - darkness * 10;
+                cell.style.backgroundColor = `hsl(0, 0%, ${0}%)`;
             }
         };
 
@@ -200,15 +201,10 @@ const drawGrid = (size) => {
 
 function makeContainer(size) {
     container.style = `
-        display : grid;
+       
         grid-template-rows : repeat(${size}, 1fr);
         grid-template-columns : repeat(${size}, 1fr);
-        gap : 1px;
-        width : fit-content;
-        margin: 20px auto;
-        border: 2px solid #333;
-        padding: 2px;
-        background: #ddd;
+       
         `;
 
 
