@@ -127,149 +127,76 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 const drawGrid = (size) => {
-
     container.innerHTML = "";
     makeContainer(size);
+
     for (let i = 0; i < size * size; i++) {
         let gridCell = document.createElement("div");
         gridCell.className = "grid-cell";
+
         const cellSize = Math.min(20, 500 / size);
         gridCell.style.cssText = `
             height: ${cellSize}px;
             width: ${cellSize}px;
             background-color: #f0f0f0;
             border: 1px solid #ddd;
-            user-select : none;
+            user-select: none;
             transition: background-color 0.09s;
-
         `;
 
-        // Add hover effect
+       
+        gridCell.dataset.darkness = "0"; // 0–10
+        gridCell.dataset.hue = "";
+
+        const paintCell = (cell) => {
+            let darkness = parseInt(cell.dataset.darkness);
+            if (darkness >= 10) return;
+
+            darkness++;
+            cell.dataset.darkness = darkness;
+
+            if (isRandomColor) {
+                if (!cell.dataset.hue) {
+                    const hue = Math.floor(Math.random() * 360);
+                    cell.dataset.hue = hue;
+                }
+
+                const lightness = 100 - darkness * 10;
+                const hue = cell.dataset.hue;
+
+                cell.style.backgroundColor = `hsl(${hue}, 100%, ${lightness}%)`;
+            } else {
+                // For non-random mode (black)
+                const lightness = 100 - darkness * 10;
+                cell.style.backgroundColor = `hsl(0, 0%, ${lightness}%)`;
+            }
+        };
+
         gridCell.addEventListener('mousedown', (e) => {
             isdrawing = true;
             e.preventDefault();
-            const randomHSLColor  = randomHSL();
-            // gridCell.style.backgroundColor = isRandomColor ? `#${randomColor()}` : currentColor;
-            gridCell.style.backgroundColor = isRandomColor ? `hsl(${randomHSLColor[0]},${randomHSLColor[1]}%, ${randomHSLColor[2]}% )` : currentColor;
-            console.log(`${randomHSLColor[0]}`);
-            console.log(`${randomHSLColor[1]}%`);
-            console.log(`${randomHSLColor[2]}%`);
-            randomHSL[2] += 10;
-            randomHSL(randomHSLColor[2] + 10);
-            console.log("new opacity : " + randomHSLColor[2]);
-
-
-
+            paintCell(gridCell);
         });
 
         gridCell.addEventListener('mouseover', () => {
             if (isdrawing) {
-                const randomHSLColor  = randomHSL();
-                // gridCell.style.backgroundColor = isRandomColor ? `#${randomColor()}` : currentColor;
-               gridCell.style.backgroundColor = isRandomColor ? `hsl(${randomHSLColor[0]},${randomHSLColor[1]}%, ${randomHSLColor[2]}% )` : currentColor;
-                console.log(`${randomHSLColor[0]}`);
-                console.log(`${randomHSLColor[1]}%`);
-                console.log(`${randomHSLColor[2]}%`);
-                randomHSL[2] += 10;
-
+                paintCell(gridCell);
             }
-        })
+        });
 
         gridCell.addEventListener("mouseup", () => {
             isdrawing = false;
-        })
+        });
 
         container.appendChild(gridCell);
     }
 
-    // stop when mouse is released
-
     document.addEventListener("mouseup", () => {
         isdrawing = false;
-    })
-}
+    });
+};
 
-// const drawGrid = (size) => {
-//     container.innerHTML = "";
-//     makeContainer(size);
 
-//     for (let i = 0; i < size * size; i++) {
-//         let cell = document.createElement("div");
-//         cell.className = "grid-cell";
-//         const cellSize = Math.min(20, 500 / size);
-
-//         cell.style.cssText = `
-//             height: ${cellSize}px;
-//             width: ${cellSize}px;
-//             background-color: #f0f0f0;
-//             border: 1px solid #ddd;
-//             user-select: none;
-//             transition: background-color 0.1s;
-//         `;
-
-//         cell.dataset.darkness = "0";
-//         cell.dataset.rgb = "";
-
-//         const paintCell = (cell) => {
-//             let darkness = parseInt(cell.dataset.darkness);
-//             if (darkness >= 10) return;
-//             darkness++;
-//             cell.dataset.darkness = darkness;
-
-//             if (currentColor === "#f0f0f0") {
-//                 cell.style.backgroundColor = currentColor;
-//                 cell.dataset.darkness = "0";
-//                 cell.dataset.rgb = "";
-//                 return;
-//             }
-
-//             if (isRandomColor) {
-//                 // Assign and store original RGB color
-//                 if (!cell.dataset.rgb) {
-//                     const r = Math.floor(Math.random() * 256);
-//                     const g = Math.floor(Math.random() * 256);
-//                     const b = Math.floor(Math.random() * 256);
-//                     cell.dataset.rgb = `${r},${g},${b}`;
-//                 }
-
-//                 const [r, g, b] = cell.dataset.rgb.split(",").map(Number);
-//                 const factor = 1 - darkness * 0.1;
-
-//                 const newR = Math.floor(r * factor);
-//                 const newG = Math.floor(g * factor);
-//                 const newB = Math.floor(b * factor);
-
-//                 cell.style.backgroundColor = `rgb(${newR}, ${newG}, ${newB})`;
-
-//             } else {
-//                 // Black darkening via HSL
-//                 const lightness = 100 - darkness * 10;
-//                 cell.style.backgroundColor = `hsl(0, 0%, ${lightness}%)`;
-//             }
-//         };
-
-//         cell.addEventListener("mousedown", () => {
-//             isdrawing = true;
-//             paintCell(cell);
-//         });
-
-//         cell.addEventListener("mouseover", () => {
-//             if (isdrawing) {
-//                 paintCell(cell);
-//             }
-//         });
-
-//         cell.addEventListener("mouseup", () => {
-//             isdrawing = false;
-//         });
-
-//         container.appendChild(cell);
-//     }
-
-//     document.addEventListener("mouseup", () => {
-//         isdrawing = false;
-//     });
-// };
 
 function makeContainer(size) {
     container.style = `
